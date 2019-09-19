@@ -1,5 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">URCE</string>
-    <string name="title_activity_login">Sign in</string>
-
+    <string name="title_activity_maps">Map</string>
 </resources>
