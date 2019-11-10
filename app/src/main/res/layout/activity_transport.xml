@@ -14,14 +14,22 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <fragment
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:name="com.google.android.gms.maps.MapFragment"
-            android:id="@+id/map"/>
-
         <include
             layout="@layout/toolbar"/>
+
+        <Button
+            android:layout_height="100dp"
+            android:layout_width="100dp"
+            android:text="Track"
+            android:id="@+id/stu"
+            android:onClick="stud"/>
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="Update"
+            android:id="@+id/bus"
+            android:onClick="bus"/>
 
     </LinearLayout>
 

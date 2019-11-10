@@ -3,7 +3,9 @@ package com.specialteam.urce;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,10 +24,13 @@ public class Login extends AppCompatActivity {
     private Intent home;
     public FirebaseAuth auth;
     private FirebaseAuth.AuthStateListener listener;
-    private EditText user;
+    private EditText mail;
     private EditText pass;
 
     static String name = "bhanu";
+
+    SharedPreferences sharedPreferences;
+    String AppPreference = "URCE_Preference";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +38,10 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         FirebaseApp.initializeApp(this);
 
-        user = findViewById(R.id.username);
+        mail = findViewById(R.id.mail);
         pass = findViewById(R.id.password);
+
+        sharedPreferences = getSharedPreferences(AppPreference, Context.MODE_PRIVATE);
 
         listener = new FirebaseAuth.AuthStateListener(){
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -65,26 +72,30 @@ public class Login extends AppCompatActivity {
 
     public void Next(View view){
 
-        auth.signInWithEmailAndPassword(user.getText().toString(),pass.getText().toString())
+        auth.signInWithEmailAndPassword(mail.getText().toString(),pass.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "onComplete: sss");
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = auth.getCurrentUser();
-                            name = user.getUid();
+                            FirebaseUser Fuser = auth.getCurrentUser();
+                            name = Fuser.getUid();
 
                             home = new Intent(Login.this,Home.class);
                             Log.d(TAG, name);
                             home.putExtra("name",name);
                             if(name!=null) {
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("App_Login_Mail",mail.getText().toString());
+                                editor.putString("App_Login_Pass",pass.getText().toString());
+                                editor.commit();
                                 startActivity(home);
                             }
                         } else {
                             // If sign in fails, display a message to the user.
 
-                            name = "not";
+                            name = null;
                         }
 
                         // ...

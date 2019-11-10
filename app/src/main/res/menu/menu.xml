@@ -15,5 +15,8 @@
             android:title="Canteen"
             android:id="@+id/canteen"/>
 
+        <item android:id="@+id/logout"
+            android:title="Logout"/>
+
     </group>
 </menu>
