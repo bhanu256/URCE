@@ -4,9 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,18 +34,25 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.Query;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.specialteam.urce.ContextAdaptor.context1;
+
 public class Home extends AppCompatActivity{
 
     Intent intent;
     Bundle bd;
 
-    ContextAdaptor adaptor;
+    List<String> ids = new ArrayList<String>();
 
     private DatabaseReference databaseReference;
     FirebaseAuth auth;
 
     SharedPreferences sharedPreferences;
     String AppPreference = "URCE_Preference";
+
+    FirebaseRecyclerAdapter<DataFromAdaptor,ContextHolder> adaptor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,16 +114,34 @@ public class Home extends AppCompatActivity{
     public void recycleload(){
         Query query = FirebaseDatabase.getInstance().getReference().child("Container");
 
+        System.out.println(query);
+
         FirebaseRecyclerOptions<DataFromAdaptor> options = new FirebaseRecyclerOptions.Builder<DataFromAdaptor>()
                 .setQuery(query,DataFromAdaptor.class)
                 .build();
 
-        adaptor = new ContextAdaptor(getApplicationContext(),options);
+
+        adaptor = new FirebaseRecyclerAdapter<DataFromAdaptor, ContextHolder>(options) {
+            @NonNull
+            @Override
+            public ContextHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_adaptorcard,parent,false);
+                return new ContextHolder(v);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull ContextHolder contextHolder, int i, @NonNull DataFromAdaptor dataFromAdaptor) {
+                contextHolder.tvname.setText(dataFromAdaptor.getCName());
+                Glide.with(getApplicationContext()).load(dataFromAdaptor.getPhotoID()).placeholder(R.mipmap.ic_launcher).into(contextHolder.ivimage);
+                ids.add(dataFromAdaptor.getCommentID());
+            }
+        };
 
         RecyclerView recyclerView = findViewById(R.id.recycle);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adaptor);
+        System.out.println("qaf");
     }
 
     @Override
@@ -125,6 +154,38 @@ public class Home extends AppCompatActivity{
     protected void onStop() {
         super.onStop();
         adaptor.stopListening();
+    }
+
+    public void comment(String id){
+        Intent intent = new Intent(Home.this,Comment.class);
+        intent.putExtra("CommentId",id);
+        startActivity(intent);
+    }
+
+
+    class ContextHolder extends RecyclerView.ViewHolder{
+
+        TextView tvname;
+        ImageView ivimage;
+        TextView vac;
+        public ContextHolder(@NonNull final View itemView) {
+            super(itemView);
+            tvname = itemView.findViewById(R.id.cname);
+            ivimage = itemView.findViewById(R.id.img);
+            vac = itemView.findViewById(R.id.vac);
+
+            System.out.println("fwef");
+
+            vac.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(ids!=null) {
+                        System.out.println(ids.get(getAdapterPosition()));
+                        comment(ids.get(getAdapterPosition()));
+                    }
+                }
+            });
+        }
     }
 }
 
