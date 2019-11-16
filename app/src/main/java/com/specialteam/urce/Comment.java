@@ -14,8 +14,12 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class Comment extends AppCompatActivity {
 
@@ -30,11 +34,23 @@ public class Comment extends AppCompatActivity {
 
         String id = extras.getString("CommentId");
 
-        System.out.println(id);
-
         Query query = FirebaseDatabase.getInstance().getReference().child("Comments").child(id);
 
-        System.out.println(query);
+        /*DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Comments").child(id);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()){
+                    System.out.println(dataSnapshot1.getValue());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });*/
 
         FirebaseRecyclerOptions<CommentsData> options = new FirebaseRecyclerOptions.Builder<CommentsData>()
                 .setQuery(query,CommentsData.class)
@@ -43,8 +59,10 @@ public class Comment extends AppCompatActivity {
          firebaseRecyclerAdapter= new FirebaseRecyclerAdapter<CommentsData, CommentViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull CommentViewHolder commentViewHolder, int i, @NonNull CommentsData commentsData) {
-                commentViewHolder.Oname.setText(commentsData.getOname());
-                commentViewHolder.comments.setText(commentsData.getComment());
+                String name = commentsData.getOname();
+                String comment = commentsData.getComment();
+                commentViewHolder.Oname.setText(name);
+                commentViewHolder.comments.setText(comment);
             }
 
             @NonNull
@@ -81,9 +99,8 @@ public class Comment extends AppCompatActivity {
 
         public CommentViewHolder(@NonNull View itemView) {
             super(itemView);
-            Oname = findViewById(R.id.commentedName);
-            comments = findViewById(R.id.CommentsBy);
-            System.out.println("HHHH");
+            Oname = itemView.findViewById(R.id.commentedName);
+            comments = itemView.findViewById(R.id.CommentsBy);
         }
     }
 }

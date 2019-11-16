@@ -5,11 +5,11 @@ public class CommentsData {
     String Oname;
     String Comment;
 
-    CommentsData(){
+    public CommentsData(){
 
     }
 
-    CommentsData(String Oname,String Comment){
+    public CommentsData(String Oname,String Comment){
         this.Oname = Oname;
         this.Comment = Comment;
     }
