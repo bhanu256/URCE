@@ -19,7 +19,8 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="100px"
-            android:text="wfwfwfw"/>
+            android:text="wfwfwfw"
+            android:onClick="post_select"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycle"

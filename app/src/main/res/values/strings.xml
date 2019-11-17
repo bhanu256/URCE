@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">URCE</string>
     <string name="title_activity_maps">Map</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>

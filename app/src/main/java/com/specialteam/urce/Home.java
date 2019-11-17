@@ -1,6 +1,8 @@
 package com.specialteam.urce;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -16,6 +18,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,6 +57,12 @@ public class Home extends AppCompatActivity{
 
     FirebaseRecyclerAdapter<DataFromAdaptor,ContextHolder> adaptor;
 
+    final int PICK_IMAGE = 1;
+    final int RESULT_CODE = -1;
+
+    NavigationView naview;
+    DrawerLayout drawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,8 +90,13 @@ public class Home extends AppCompatActivity{
 
         databaseReference.child(user.getUid()).setValue(dats);
 
-        DrawerLayout drawerLayout = findViewById(R.id.my_drawer_layout);
-        NavigationView naview = findViewById(R.id.navigation);
+        drawerLayout = findViewById(R.id.my_drawer_layout);
+        naview = findViewById(R.id.navigation);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.open,R.string.close);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.setDrawerIndicatorEnabled(true);
+        toggle.syncState();
 
 
         naview.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -92,6 +106,9 @@ public class Home extends AppCompatActivity{
                 Intent intent2;
 
                 switch(menuItem.getItemId()){
+
+                    case R.id.home : drawerLayout.closeDrawer(Gravity.LEFT);
+                                        return true;
 
                     case R.id.transport : intent2 = new Intent(Home.this,Transport.class);
                                             startActivity(intent2);
@@ -144,6 +161,10 @@ public class Home extends AppCompatActivity{
         System.out.println("qaf");
     }
 
+    public void nav(View view){
+        drawerLayout.openDrawer(Gravity.LEFT);
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -154,6 +175,22 @@ public class Home extends AppCompatActivity{
     protected void onStop() {
         super.onStop();
         adaptor.stopListening();
+    }
+
+    public void post_select(View view){
+        Intent img_intent = new Intent(Intent.ACTION_PICK);
+        img_intent.setType("image/*");
+        img_intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(img_intent,PICK_IMAGE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==PICK_IMAGE && resultCode==RESULT_CODE && data!=null && data.getData()!=null){
+
+        }
     }
 
     public void comment(String id){
