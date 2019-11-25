@@ -57,9 +57,6 @@ public class Home extends AppCompatActivity{
 
     FirebaseRecyclerAdapter<DataFromAdaptor,ContextHolder> adaptor;
 
-    final int PICK_IMAGE = 1;
-    final int RESULT_CODE = -1;
-
     NavigationView naview;
     DrawerLayout drawerLayout;
 
@@ -178,19 +175,8 @@ public class Home extends AppCompatActivity{
     }
 
     public void post_select(View view){
-        Intent img_intent = new Intent(Intent.ACTION_PICK);
-        img_intent.setType("image/*");
-        img_intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(img_intent,PICK_IMAGE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode==PICK_IMAGE && resultCode==RESULT_CODE && data!=null && data.getData()!=null){
-
-        }
+        Intent intent = new Intent(Home.this,Post_Selection.class);
+        startActivity(intent);
     }
 
     public void comment(String id){
