@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity{
 
     String mail = null;
     String pass = null;
+    String name = null;
 
     FirebaseAuth auth;
 
@@ -35,10 +36,11 @@ public class MainActivity extends AppCompatActivity{
 
         mail = sharedPreferences.getString("App_Login_Mail",null);
         pass = sharedPreferences.getString("App_Login_Pass",null);
+        name = sharedPreferences.getString("Name",null);
 
         auth = FirebaseAuth.getInstance();
 
-        if(mail!=null){
+        if(mail!=null&&name!=null){
             Log.d("Mail",mail);
             Log.d("Pass",pass);
             auth.signInWithEmailAndPassword(mail,pass)

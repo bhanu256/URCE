@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -19,7 +20,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Post_Selection"></activity>
+        <activity android:name=".CanteenStudent"></activity>
+        <activity android:name=".CanteenAdmin" />
+
+        <receiver
+            android:name=".MyReceiver"
+            android:enabled="true"
+            android:exported="true" />
+
+        <service
+            android:name=".AfterKilled"
+            android:enabled="true"
+            android:exported="true"
+            android:stopWithTask="false" />
+
+        <activity android:name=".Form" />
+        <activity android:name=".Post_Selection" />
         <activity android:name=".Comment" />
         <activity
             android:name=".MapsActivity"
@@ -46,6 +62,9 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <service
             android:name=".GetLocationSet"

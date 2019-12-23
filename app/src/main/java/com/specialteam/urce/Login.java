@@ -3,6 +3,7 @@ package com.specialteam.urce;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -72,6 +74,10 @@ public class Login extends AppCompatActivity {
 
     public void Next(View view){
 
+        final ProgressDialog progressDialog = new ProgressDialog(Login.this);
+        progressDialog.setTitle("Logging in.....");
+        progressDialog.show();
+
         auth.signInWithEmailAndPassword(mail.getText().toString(),pass.getText().toString())
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -82,7 +88,7 @@ public class Login extends AppCompatActivity {
                             FirebaseUser Fuser = auth.getCurrentUser();
                             name = Fuser.getUid();
 
-                            home = new Intent(Login.this,Home.class);
+                            home = new Intent(Login.this,Form.class);
                             Log.d(TAG, name);
                             home.putExtra("name",name);
                             if(name!=null) {
@@ -90,6 +96,7 @@ public class Login extends AppCompatActivity {
                                 editor.putString("App_Login_Mail",mail.getText().toString());
                                 editor.putString("App_Login_Pass",pass.getText().toString());
                                 editor.commit();
+                                progressDialog.dismiss();
                                 startActivity(home);
                             }
                         } else {

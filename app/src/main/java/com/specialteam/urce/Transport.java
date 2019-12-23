@@ -6,15 +6,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.JobIntentService;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -107,7 +113,14 @@ public class Transport extends AppCompatActivity{
 
     public void bus(View view){
         Intent locationIntent = new Intent(this,GetLocationSet.class);
-        startService(locationIntent);
+
+
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
+            startService(locationIntent);
+        }
+        else{
+            startService(locationIntent);
+        }
         Toast toast = Toast.makeText(getApplicationContext(),"Service started",Toast.LENGTH_SHORT);
         toast.show();
     }

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CanteenStudent">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".CanteenStudent"
+        android:background="@drawable/canteen_gradient_two">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="30dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="URCE Canteen\n Today Menu"
+                android:fontFamily="@font/harmattan"
+                android:textSize="30sp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:gravity="center"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="150dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Morning:"
+                android:textSize="20sp"
+                android:fontFamily="@font/harmattan"
+                android:textColor="@color/white"
+                android:textStyle="bold"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Morning Items"
+                android:fontFamily="@font/harmattan"
+                android:textColor="@color/colorBlue"
+                android:background="@drawable/canteen_rounded"
+                android:elevation="3dp"
+                android:id="@+id/morningItemsStudent"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Afternoon:"
+                android:textSize="20sp"
+                android:fontFamily="@font/harmattan"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Afternoon Items"
+                android:fontFamily="@font/harmattan"
+                android:textColor="@color/colorBlue"
+                android:background="@drawable/canteen_rounded"
+                android:elevation="3dp"
+                android:id="@+id/afternoonItemsStudent"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Evening:"
+                android:textSize="20sp"
+                android:fontFamily="@font/harmattan"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:layout_marginTop="10dp"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Evening Items"
+                android:fontFamily="@font/harmattan"
+                android:textColor="@color/colorBlue"
+                android:background="@drawable/canteen_rounded"
+                android:elevation="3dp"
+                android:id="@+id/eveningItemsStudent"/>
+
+        </LinearLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="An Application from \nUsha Rama Innovation and Incubation Center"
+            android:gravity="center"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="15dp"
+            android:fontFamily="@font/harmattan"
+            android:textColor="#9E9E9E"/>
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

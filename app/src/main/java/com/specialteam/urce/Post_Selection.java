@@ -1,8 +1,10 @@
 package com.specialteam.urce;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -14,17 +16,36 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 
 public class Post_Selection extends AppCompatActivity {
 
@@ -32,6 +53,10 @@ public class Post_Selection extends AppCompatActivity {
     final int RESULT_CODE = -1;
 
     Uri imageUri;
+    String compr;
+
+    String id;
+    int ID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +83,7 @@ public class Post_Selection extends AppCompatActivity {
 
                 String compressed_path = compressImage();
                 System.out.println(compressed_path);
+                compr = compressed_path;
                 upload(compressed_path);
             }
         }
@@ -72,6 +98,97 @@ public class Post_Selection extends AppCompatActivity {
             ImageView imageView = findViewById(R.id.post);
             imageView.setImageBitmap(bitmap);
         }
+    }
+
+    public void button(View view){
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("IDs").child("Container").child("num");
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                id = dataSnapshot.getValue().toString();
+                ID = Integer.parseInt(id) + 1;
+                id = id.toString();
+                id = "cont" + ID;
+                DatabaseReference reff = FirebaseDatabase.getInstance().getReference().child("IDs").child("Container").child("num");
+                reff.setValue(ID);
+                System.out.println(id);
+                callFuntion();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+    }
+
+    private void callFuntion() {
+        final StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(id);
+
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Uplodaing....");
+        progressDialog.show();
+
+        Bitmap bitmap = BitmapFactory.decodeFile(compr);
+        ImageView imageView = findViewById(R.id.post);
+        imageView.setImageBitmap(bitmap);
+
+        final Intent intent = new Intent(Post_Selection.this,Home.class);
+
+        storageReference.putFile(Uri.fromFile(new File(compr)))
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        progressDialog.dismiss();
+                        System.out.println("ffddd");
+                        Task<Uri> uri = taskSnapshot.getStorage().getDownloadUrl();
+                        String n=null;
+                        uri.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                System.out.println(uri.toString());
+                                System.out.println("com"+ID);
+
+                                DatabaseReference reff = FirebaseDatabase.getInstance().getReference();
+                                String comID = "com"+ID;
+                                String CName = "unkown";
+                                String url = uri.toString();
+
+                                reff.child("Container").child(id).child("CName").setValue(CName);
+                                reff.child("Container").child(id).child("CommentID").setValue(comID);
+                                reff.child("Container").child(id).child("PhotoID").setValue(url);
+
+                                reff.child("IDs").child("Comments").child(comID).setValue(0);
+
+                                reff.child("Comments").child(comID).setValue(0);
+
+                                startActivity(intent);
+                            }
+                        });
+
+                        Toast.makeText(Post_Selection.this,"Uploaded",Toast.LENGTH_SHORT);
+                        //startActivity(intent);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        progressDialog.dismiss();
+                        Toast.makeText(Post_Selection.this,"Failed",Toast.LENGTH_SHORT);
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                .getTotalByteCount());
+                        progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                    }
+                });
     }
 
     public String compressImage() {
@@ -227,6 +344,11 @@ public class Post_Selection extends AppCompatActivity {
         }
         cursor.close();
         return res;
+    }
+
+    public String getpathoreo(Uri contentUri){
+
+        return "";
     }
 
     public String getPathAPI19(Uri contentUri){

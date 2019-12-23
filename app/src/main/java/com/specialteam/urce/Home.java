@@ -113,10 +113,25 @@ public class Home extends AppCompatActivity{
 
                     case R.id.logout :    sharedPreferences.edit().remove("App_Login_Mail").commit();
                     sharedPreferences.edit().remove("App_Login_Pass").commit();
+                        sharedPreferences.edit().remove("Name").commit();
+                        sharedPreferences.edit().remove("Number").commit();
+                        sharedPreferences.edit().remove("Dep").commit();
+                        sharedPreferences.edit().remove("Year").commit();
+                        sharedPreferences.edit().remove("DOB").commit();
                         intent2 = new Intent(Home.this,Login.class);
                         startActivity(intent2);
                     break;
 
+                    case R.id.canteen :
+                        String mail = sharedPreferences.getString("App_Login_Mail",null);
+                        if(mail.equals("canteen@gmail.com")){
+                            intent2 = new Intent(Home.this,CanteenAdmin.class);
+                            startActivity(intent2);
+                        }
+                        else{
+                            intent2 = new Intent(Home.this,CanteenStudent.class);
+                            startActivity(intent2);
+                        }
                 }
                 return false;
             }
@@ -183,6 +198,10 @@ public class Home extends AppCompatActivity{
         Intent intent = new Intent(Home.this,Comment.class);
         intent.putExtra("CommentId",id);
         startActivity(intent);
+    }
+
+    public void cli(View v){
+        System.out.println(v.getContentDescription());
     }
 
 

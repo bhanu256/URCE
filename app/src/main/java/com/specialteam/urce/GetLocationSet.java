@@ -1,17 +1,27 @@
 package com.specialteam.urce;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Intent;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.Build;
+import android.os.IBinder;
 import android.os.Looper;
+import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.JobIntentService;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -33,6 +43,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.Executor;
@@ -47,16 +58,7 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
  * TODO: Customize class - update intent actions, extra parameters and static
  * helper methods.
  */
-public class GetLocationSet extends IntentService {
-    // TODO: Rename actions, choose action names that describe tasks that this
-    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
-    private static final String ACTION_FOO = "com.specialteam.urce.action.FOO";
-    private static final String ACTION_BAZ = "com.specialteam.urce.action.BAZ";
-
-    // TODO: Rename parameters
-    private static final String EXTRA_PARAM1 = "com.specialteam.urce.extra.PARAM1";
-    private static final String EXTRA_PARAM2 = "com.specialteam.urce.extra.PARAM2";
-
+public class GetLocationSet extends Service {
 
     private DatabaseReference databaseReference;
     private FirebaseAuth auth;
@@ -69,93 +71,15 @@ public class GetLocationSet extends IntentService {
     private float DEFAULT_ZOOM = 15;
     private final LatLng mDefaultLocation = new LatLng(16.578093, 80.874766);
 
+    int i=2;
 
-    public GetLocationSet() {
-        super("GetLocationSet");
-    }
+    Intent notificationIntent;
+    PendingIntent pendingIntent;
+    NotificationCompat.Builder builder;
+    Notification notification;
+    NotificationChannel channel;
+    NotificationManager notificationManager;
 
-    /**
-     * Starts this service to perform action Foo with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
-    public static void startActionFoo(Context context, String param1, String param2) {
-        Intent intent = new Intent(context, GetLocationSet.class);
-        intent.setAction(ACTION_FOO);
-        intent.putExtra(EXTRA_PARAM1, param1);
-        intent.putExtra(EXTRA_PARAM2, param2);
-        context.startService(intent);
-    }
-
-    /**
-     * Starts this service to perform action Baz with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
-    public static void startActionBaz(Context context, String param1, String param2) {
-        Intent intent = new Intent(context, GetLocationSet.class);
-        intent.setAction(ACTION_BAZ);
-        intent.putExtra(EXTRA_PARAM1, param1);
-        intent.putExtra(EXTRA_PARAM2, param2);
-        context.startService(intent);
-    }
-
-    @Override
-    protected void onHandleIntent(Intent intent) {
-
-        Toast toast = Toast.makeText(getApplicationContext(),"Started",Toast.LENGTH_SHORT);
-        toast.show();
-
-        this.databaseReference = FirebaseDatabase.getInstance().getReference();
-        this.auth = FirebaseAuth.getInstance();
-        this.user = auth.getCurrentUser();
-
-        this.mFusedLocationProviderClient = getFusedLocationProviderClient(this);
-        /*locationCallback = new LocationCallback(){
-          @Override
-          public void onLocationResult(LocationResult locationResult){
-              super.onLocationResult(locationResult);
-          }
-        };
-
-        LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(10000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);*/
-
-        if (intent != null) {
-            final String action = intent.getAction();
-            if (ACTION_FOO.equals(action)) {
-                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-                handleActionFoo(param1, param2);
-            } else if (ACTION_BAZ.equals(action)) {
-                final String param1 = intent.getStringExtra(EXTRA_PARAM1);
-                final String param2 = intent.getStringExtra(EXTRA_PARAM2);
-                handleActionBaz(param1, param2);
-            }
-        }
-        //locationupdates();
-
-        Timer time = new Timer();
-        time.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                intervallocations();
-            }
-        },0,60000);
-
-        /*try {
-            mFusedLocationProviderClient.requestLocationUpdates(locationRequest, null);
-        } catch (SecurityException unlikely) {
-            Log.e("EXCEPTION", "Lost location permission. Could not request updates. " + unlikely);
-        }*/
-
-    }
 
     public void intervallocations(){
         try {
@@ -167,8 +91,8 @@ public class GetLocationSet extends IntentService {
                 public void onSuccess(Location location) {
                     if(location!=null){
                         Log.v("loca",location.getLatitude()+" "+location.getLongitude());
-                        databaseReference.child("Location").child("Latitude").setValue(location.getLatitude());
-                        databaseReference.child("Location").child("Longitude").setValue(location.getLongitude());
+                        databaseReference.child("Location").child("Latitude").setValue(location.getLatitude()+i);
+                        databaseReference.child("Location").child("Longitude").setValue(location.getLongitude()+i);
                     }
                 }
             });
@@ -231,21 +155,104 @@ public class GetLocationSet extends IntentService {
 
 
 
-    /**
-     * Handle action Foo in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionFoo(String param1, String param2) {
-        // TODO: Handle action Foo
-        throw new UnsupportedOperationException("Not yet implemented");
+
+    @Override
+    public void onCreate(){
+        super.onCreate();
+
+        Intent intent = new Intent(GetLocationSet.this,AfterKilled.class);
+        startService(intent);
+
+        notificationIntent = new Intent(this, GetLocationSet.class);
+        pendingIntent=PendingIntent.getActivity(this,0,notificationIntent,0);
+        builder = new NotificationCompat.Builder(this,"Location update")
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setChannelId("12345")
+                .setContentTitle("Location")
+                .setContentText("Updating")
+                .setContentIntent(pendingIntent);
+        notification=builder.build();
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
+            channel = new NotificationChannel("12345", "Location update", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.setDescription("For updating");
+            notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+        Toast toast = Toast.makeText(getApplicationContext(),"Started",Toast.LENGTH_SHORT);
+        toast.show();
+
+        this.databaseReference = FirebaseDatabase.getInstance().getReference();
+        this.auth = FirebaseAuth.getInstance();
+        this.user = auth.getCurrentUser();
+
+        this.mFusedLocationProviderClient = getFusedLocationProviderClient(this);
+        /*locationCallback = new LocationCallback(){
+          @Override
+          public void onLocationResult(LocationResult locationResult){
+              super.onLocationResult(locationResult);
+          }
+        };
+
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setInterval(10000);
+        locationRequest.setFastestInterval(10000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);*/
+
+
+        //locationupdates();
+
+        Timer time = new Timer();
+        time.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+
+                if(i%2==0) {
+                    System.out.println("jjk");
+                    intervallocations();
+                    startForeground(12345, notification);
+                    StatusBarNotification[] notlist = notificationManager.getActiveNotifications();
+                    for(int j=0;j<notlist.length;j++){
+                        System.out.println(notlist[j].getId());
+                    }
+                }
+                else {
+                    System.out.println("out");
+                    //stopService(new Intent(GetLocationSet.this, GetLocationSet.class));
+                    stopForeground(true);
+                    StatusBarNotification[] notlist = notificationManager.getActiveNotifications();
+                    for(int j=0;j<notlist.length;j++){
+                        System.out.println(notlist[j].getId());
+                    }
+                    //onDestroy();
+                }
+                ++i;
+            }
+        },0,6000);
+
+        /*try {
+            mFusedLocationProviderClient.requestLocationUpdates(locationRequest, null);
+        } catch (SecurityException unlikely) {
+            Log.e("EXCEPTION", "Lost location permission. Could not request updates. " + unlikely);
+        }*/
+
+
     }
 
-    /**
-     * Handle action Baz in the provided background thread with the provided
-     * parameters.
-     */
-    private void handleActionBaz(String param1, String param2) {
-        // TODO: Handle action Baz
-        throw new UnsupportedOperationException("Not yet implemented");
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction("restartservice");
+        broadcastIntent.setClass(this, MyReceiver.class);
+        this.sendBroadcast(broadcastIntent);
+    }
+
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 }

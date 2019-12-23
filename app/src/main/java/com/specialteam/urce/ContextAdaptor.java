@@ -36,6 +36,8 @@ class ContextAdaptor extends FirebaseRecyclerAdapter<DataFromAdaptor,ContextAdap
 
     List<String> ids = new ArrayList<String>();
 
+    ContextHolder contextHolder2;
+
     public ContextAdaptor(Context context,@NonNull FirebaseRecyclerOptions<DataFromAdaptor> options) {
         super(options);
         this.context1 = context;
@@ -44,8 +46,13 @@ class ContextAdaptor extends FirebaseRecyclerAdapter<DataFromAdaptor,ContextAdap
     @Override
     protected void onBindViewHolder(@NonNull ContextHolder contextHolder, int i, @NonNull DataFromAdaptor dataFromAdaptor) {
         contextHolder.tvname.setText(dataFromAdaptor.getCName());
-        Glide.with(context1).load(dataFromAdaptor.getPhotoID()).placeholder(R.mipmap.ic_launcher).into(contextHolder.ivimage);
+        Glide.with(context1)
+                .load(dataFromAdaptor.getPhotoID())
+                .placeholder(R.mipmap.ic_launcher)
+                .centerCrop()
+                .into(contextHolder.ivimage);
         ids.add(dataFromAdaptor.getCommentID());
+        contextHolder.ivimage.setContentDescription(dataFromAdaptor.getPhotoID());
     }
 
     @NonNull
@@ -76,7 +83,9 @@ class ContextAdaptor extends FirebaseRecyclerAdapter<DataFromAdaptor,ContextAdap
                     }
                 }
             });
+
         }
+
     }
 
 }
