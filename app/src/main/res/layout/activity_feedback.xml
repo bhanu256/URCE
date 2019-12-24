@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Feedback">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="\u2764"
+                    android:textSize="80sp"
+                    android:textColor="@color/colorBlue"
+                    android:gravity="center"
+                    android:layout_marginTop="50dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="We appreciate your feedback"
+                    android:fontFamily="@font/harmattan"
+                    android:gravity="center"
+                    android:textSize="30sp"
+                    android:textColor="@color/colorBlue"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="You can address the problems in College, any suggestions.."
+                    android:gravity="center"
+                    android:fontFamily="@font/harmattan"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="20dp">
+
+                    <EditText
+                        android:id="@+id/FeedbackEditView"
+                        android:layout_height="wrap_content"
+                        android:hint="You are writing anonymously"
+                        android:fontFamily="@font/harmattan"
+                        android:textStyle="italic"
+                        android:inputType="textMultiLine"
+                        android:layout_width="fill_parent"
+                        android:paddingTop="50dp">
+                    </EditText>
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Submit"
+                        android:background="@color/colorSmoothGreen"
+                        android:layout_alignParentBottom="true"
+                        android:onClick="FeedbackSubmit"
+                        android:layout_marginTop="20dp"/>
+
+                </RelativeLayout>
+            </LinearLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

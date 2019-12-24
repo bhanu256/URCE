@@ -15,6 +15,10 @@
             android:title="Canteen"
             android:id="@+id/canteen"/>
 
+        <item
+            android:title="Feedback"
+            android:id="@+id/feedback"/>
+
         <item android:id="@+id/logout"
             android:title="Logout"/>
 

@@ -16,6 +16,35 @@
 
         <include layout="@layout/toolbar" />
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/colorSmoothGreen"
+            android:id="@+id/BirthdayCardLayout"
+            android:visibility="gone"
+            android:elevation="3dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Happy Birthday!!"
+                android:gravity="center"
+                android:fontFamily="@font/harmattan"
+                android:textSize="20sp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:gravity="center"
+                android:fontFamily="@font/harmattan"
+                android:textStyle="bold"
+                android:id="@+id/BirthdayNamesTextView"/>
+
+        </LinearLayout>
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="100px"

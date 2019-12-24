@@ -91,8 +91,8 @@ public class GetLocationSet extends Service {
                 public void onSuccess(Location location) {
                     if(location!=null){
                         Log.v("loca",location.getLatitude()+" "+location.getLongitude());
-                        databaseReference.child("Location").child("Latitude").setValue(location.getLatitude()+i);
-                        databaseReference.child("Location").child("Longitude").setValue(location.getLongitude()+i);
+                        databaseReference.child("Location").child("Latitude").setValue(location.getLatitude());
+                        databaseReference.child("Location").child("Longitude").setValue(location.getLongitude());
                     }
                 }
             });
@@ -228,7 +228,7 @@ public class GetLocationSet extends Service {
                 }
                 ++i;
             }
-        },0,6000);
+        },0,30000);
 
         /*try {
             mFusedLocationProviderClient.requestLocationUpdates(locationRequest, null);
