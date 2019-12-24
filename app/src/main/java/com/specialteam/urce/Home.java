@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -23,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,7 +48,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-import static com.specialteam.urce.ContextAdaptor.context1;
 
 public class Home extends AppCompatActivity{
 
@@ -302,6 +303,10 @@ public class Home extends AppCompatActivity{
         TextView tvname;
         ImageView ivimage;
         TextView vac;
+
+        ImageView like;
+        ImageView heart;
+
         public ContextHolder(@NonNull final View itemView) {
             super(itemView);
             tvname = itemView.findViewById(R.id.cname);
@@ -310,6 +315,9 @@ public class Home extends AppCompatActivity{
 
             System.out.println("fwef");
 
+            like = itemView.findViewById(R.id.frame_id);
+            heart = itemView.findViewById(R.id.heart);
+
             vac.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -317,6 +325,23 @@ public class Home extends AppCompatActivity{
                         System.out.println(ids.get(getAdapterPosition()));
                         comment(ids.get(getAdapterPosition()));
                     }
+                }
+            });
+
+
+            like.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    like.setImageResource(0);
+                    like.setImageResource(R.drawable.ic_flame_linked);
+                }
+            });
+
+            heart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println("ddd");
+                    heart.setImageResource(R.drawable.ic_favorite_linked);
                 }
             });
         }

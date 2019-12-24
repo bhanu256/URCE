@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -68,11 +70,14 @@ class ContextAdaptor extends FirebaseRecyclerAdapter<DataFromAdaptor,ContextAdap
         TextView tvname;
         ImageView ivimage;
         TextView vac;
+
+
         public ContextHolder(@NonNull final View itemView) {
             super(itemView);
             tvname = itemView.findViewById(R.id.cname);
             ivimage = itemView.findViewById(R.id.img);
             vac = itemView.findViewById(R.id.vac);
+
 
             vac.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -83,6 +88,8 @@ class ContextAdaptor extends FirebaseRecyclerAdapter<DataFromAdaptor,ContextAdap
                     }
                 }
             });
+
+
 
         }
 

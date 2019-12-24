@@ -8,4 +8,5 @@
     <color name="colorAccept">#8BC34A</color>
     <color name="colorSmoothGreen">#9CCC65</color>
     <color name="colorRed">#D50000</color>
+    <color name="colorBlack">#000000</color>
 </resources>

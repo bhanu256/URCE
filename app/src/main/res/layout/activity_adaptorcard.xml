@@ -17,6 +17,7 @@
             app:layout_constraintBottom_toTopOf="@id/img"
             app:layout_constraintStart_toStartOf="parent" />
 
+
         <ImageView
             android:id="@+id/img"
             android:layout_width="match_parent"
@@ -30,13 +31,33 @@
             android:adjustViewBounds="true"/>
 
         <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:id="@+id/vac"
+            android:visibility="gone"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/img"/>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="25dp"
-            android:layout_marginTop="8dp"
-            android:text="View all comments"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/img" />
+            app:layout_constraintTop_toBottomOf="@id/img">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_favorite_border_comment"
+                android:id="@+id/heart" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_flame_default"
+                android:id="@+id/frame_id" />
+
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
