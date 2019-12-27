@@ -7,9 +7,24 @@
     tools:context=".Post_Selection">
 
     <ImageView
+        android:id="@+id/post"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/post"/>
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/commentTag"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/commentTag"
+        android:hint="Wanna add comment"
+        app:layout_constraintLeft_toRightOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/post"
+        app:layout_constraintBottom_toTopOf="@id/upload"/>
 
     <Button
         android:id="@+id/upload"
@@ -20,6 +35,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/post" />
+        app:layout_constraintTop_toBottomOf="@+id/commentTag" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

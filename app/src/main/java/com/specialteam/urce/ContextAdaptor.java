@@ -53,7 +53,7 @@ class ContextAdaptor extends FirebaseRecyclerAdapter<DataFromAdaptor,ContextAdap
                 .placeholder(R.mipmap.ic_launcher)
                 .centerCrop()
                 .into(contextHolder.ivimage);
-        ids.add(dataFromAdaptor.getCommentID());
+        //ids.add(dataFromAdaptor.getCommentID());
         contextHolder.ivimage.setContentDescription(dataFromAdaptor.getPhotoID());
     }
 

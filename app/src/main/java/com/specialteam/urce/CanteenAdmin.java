@@ -17,6 +17,8 @@ import java.util.HashMap;
 
 public class CanteenAdmin extends AppCompatActivity {
 
+
+
     String morningItems = "", afternoonItems = "", eveningItems ="";
     String date;
     DatabaseReference reff;
@@ -41,6 +43,8 @@ public class CanteenAdmin extends AppCompatActivity {
         reff = FirebaseDatabase.getInstance().getReference().child("TodayFood").child(date);
         HashMap<String,Object> result = new HashMap<>();
         result.put("Morning",morningItems);
+        result.put("rating",0);
+        result.put("rateCount",0);
         reff.updateChildren(result);
 
         Toast.makeText(this, "Morning Item Added", Toast.LENGTH_SHORT).show();

@@ -1,112 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".CanteenStudent">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+<ScrollView
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true">
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         tools:context=".CanteenStudent"
-        android:background="@drawable/canteen_gradient_two">
+        android:background="#424242">
 
         <RelativeLayout
+            android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="30dp">
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="30dp"
+            tools:layout_editor_absoluteY="30dp"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="URCE Canteen\n Today Menu"
                 android:fontFamily="@font/harmattan"
+                android:gravity="center"
+                android:text="Today's Menu"
                 android:textSize="30sp"
-                android:textColor="@color/white"
                 android:textStyle="bold"
-                android:gravity="center"/>
+                android:layout_marginTop="40dp"
+                android:textColor="@color/white"/>
 
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
             android:orientation="vertical"
-            android:layout_marginTop="150dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Morning:"
-                android:textSize="20sp"
-                android:fontFamily="@font/harmattan"
-                android:textColor="@color/white"
-                android:textStyle="bold"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Morning Items"
-                android:fontFamily="@font/harmattan"
-                android:textColor="@color/colorBlue"
-                android:background="@drawable/canteen_rounded"
-                android:elevation="3dp"
-                android:id="@+id/morningItemsStudent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.4"
+            tools:layout_editor_absoluteX="30dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Afternoon:"
-                android:textSize="20sp"
                 android:fontFamily="@font/harmattan"
+                android:text="MORNING"
+                android:textColor="#FFA000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/morningItemsStudent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="3dp"
+                android:fontFamily="@font/harmattan"
+                android:text="Morning items"
                 android:textColor="@color/white"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp"/>
+                android:textSize="15sp" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/harmattan"
+                android:text="AFTERNOON"
+                android:textColor="#FFA000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/afternoonItemsStudent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="3dp"
+                android:fontFamily="@font/harmattan"
                 android:text="Afternoon Items"
-                android:fontFamily="@font/harmattan"
-                android:textColor="@color/colorBlue"
-                android:background="@drawable/canteen_rounded"
-                android:elevation="3dp"
-                android:id="@+id/afternoonItemsStudent"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Evening:"
-                android:textSize="20sp"
-                android:fontFamily="@font/harmattan"
                 android:textColor="@color/white"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp"/>
+                android:textSize="15sp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Evening Items"
+                android:layout_marginTop="10dp"
                 android:fontFamily="@font/harmattan"
-                android:textColor="@color/colorBlue"
-                android:background="@drawable/canteen_rounded"
+                android:text="EVENING"
+                android:textColor="#FFA000"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/eveningItemsStudent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:elevation="3dp"
-                android:id="@+id/eveningItemsStudent"/>
+                android:fontFamily="@font/harmattan"
+                android:text="Evening Items"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Rate today's food?"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/harmattan"/>
+
+
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/ImageRatingBar"
+                android:id="@+id/ratingBar"
+                android:stepSize="1"
+                android:numStars="5"
+                android:layout_marginTop="30dp"
+                android:layout_gravity="center" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Submit"
+                android:layout_marginTop="20dp"
+                android:onClick="submitCanteenRating"
+                android:layout_gravity="center"
+                android:background="#FFCA28"
+                android:elevation="3dp"
+                android:id="@+id/RateButton"/>
 
         </LinearLayout>
 
 
         <TextView
+            android:id="@+id/textView2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="An Application from \nUsha Rama Innovation and Incubation Center"
-            android:gravity="center"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="15dp"
             android:fontFamily="@font/harmattan"
-            android:textColor="#9E9E9E"/>
-    </RelativeLayout>
+            android:gravity="center"
+            android:text="An Application from \nUsha Rama Innovation and Incubation Center"
+            android:textColor="#9E9E9E"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -9,4 +9,8 @@
     <color name="colorSmoothGreen">#9CCC65</color>
     <color name="colorRed">#D50000</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorBackGrey">#F6F6F6</color>
+    <color name="colorSmoothBlue">#90CAF9</color>
+    <color name="colorAppCaption">#9E9E9E</color>
+    <color name="colorRegisterBack">#19C0F5</color>
 </resources>

@@ -3,6 +3,7 @@ package com.specialteam.urce;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -17,7 +18,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,8 +35,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,6 +55,9 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -54,7 +69,9 @@ public class Home extends AppCompatActivity{
     Intent intent;
     Bundle bd;
 
-    List<String> ids = new ArrayList<String>();
+    List<String> url = new ArrayList<String>();
+    List<String> likes = new ArrayList<String>();
+    List<String> contId = new ArrayList<>();
 
     private DatabaseReference databaseReference;
     FirebaseAuth auth;
@@ -77,6 +94,8 @@ public class Home extends AppCompatActivity{
     String[] Months = {"","January","February","March","April","May","June","July",
             "August","September","October","November","December"};
 
+    SQLiteDatabase database;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +111,8 @@ public class Home extends AppCompatActivity{
         databaseReference = FirebaseDatabase.getInstance().getReference();
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
+
+        database = openOrCreateDatabase("URCE",MODE_PRIVATE,null);
 
         if(intent!=null) {
             bd = intent.getExtras();
@@ -224,8 +245,36 @@ public class Home extends AppCompatActivity{
             @Override
             protected void onBindViewHolder(@NonNull ContextHolder contextHolder, int i, @NonNull DataFromAdaptor dataFromAdaptor) {
                 contextHolder.tvname.setText(dataFromAdaptor.getCName());
-                Glide.with(getApplicationContext()).load(dataFromAdaptor.getPhotoID()).placeholder(R.mipmap.ic_launcher).into(contextHolder.ivimage);
-                ids.add(dataFromAdaptor.getCommentID());
+                String u = dataFromAdaptor.getPhotoID();
+                Glide.with(getApplicationContext()).load(u).placeholder(R.mipmap.ic_launcher).into(contextHolder.ivimage);
+                url.add(u);
+                contextHolder.commented.setText(dataFromAdaptor.getDesc());
+                String loc_likes = dataFromAdaptor.getLiked();
+                String loc_id = dataFromAdaptor.getID();
+                likes.add(loc_likes);
+                contId.add(loc_id);
+                String s = "select post from CommentedPost where id='"+ loc_id+"'";
+
+                Cursor resultSet = database.rawQuery(s,null);
+                if(resultSet.moveToFirst()){
+                    System.out.println("yyy");
+                    String liked = resultSet.getString(0);
+                    //Boolean loved = resultSet.getString(0)=="loved";
+                    switch (liked){
+                        case "liked" : contextHolder.like.setImageResource(R.drawable.ic_flame_linked);
+                            System.out.println("l");
+                            break;
+
+                        case "loved" : contextHolder.heart.setImageResource(R.drawable.ic_favorite_linked);
+                            System.out.println("h");
+                            break;
+                    }
+                }
+
+                int count = Integer.parseInt(loc_likes);
+                if(count!=0){
+                    contextHolder.com_count.setText(count+"likes");
+                }
             }
         };
 
@@ -293,38 +342,104 @@ public class Home extends AppCompatActivity{
         startActivity(intent);
     }
 
-    public void cli(View v){
-        System.out.println(v.getContentDescription());
-    }
-
 
     class ContextHolder extends RecyclerView.ViewHolder{
 
         TextView tvname;
         ImageView ivimage;
-        TextView vac;
+        //TextView vac;
+
+        ImageView download;
 
         ImageView like;
         ImageView heart;
+        ImageView send;
+
+        TextView com_count;
+        TextView commented;
+
+        int pos=0;
+        DatabaseReference reff;
 
         public ContextHolder(@NonNull final View itemView) {
             super(itemView);
             tvname = itemView.findViewById(R.id.cname);
             ivimage = itemView.findViewById(R.id.img);
-            vac = itemView.findViewById(R.id.vac);
+            //vac = itemView.findViewById(R.id.vac);
 
             System.out.println("fwef");
 
             like = itemView.findViewById(R.id.frame_id);
             heart = itemView.findViewById(R.id.heart);
+            send = itemView.findViewById(R.id.send_id);
+            download = itemView.findViewById(R.id.download_id);
 
-            vac.setOnClickListener(new View.OnClickListener() {
+            com_count = itemView.findViewById(R.id.liked_count_id);
+            commented = itemView.findViewById(R.id.commented_tag_id);
+
+            database.execSQL("CREATE TABLE IF NOT EXISTS CommentedPost(id varchar(20),post varchar(10))");
+
+            System.out.println(contId);
+
+            reff = FirebaseDatabase.getInstance().getReference();
+
+            //Uncommment for comments
+            /*vac.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(ids!=null) {
-                        System.out.println(ids.get(getAdapterPosition()));
-                        comment(ids.get(getAdapterPosition()));
+                    if(url!=null) {
+                        comment(url.get(getAdapterPosition()));
                     }
+                }
+            });*/
+
+            download.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    pos = getAdapterPosition();
+                    String webUrl = url.get(pos);
+                    Glide.with(getApplicationContext())
+                            .asBitmap()
+                            .load(webUrl)
+                            .into(new CustomTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                    File dir = new File(Environment.getExternalStorageDirectory().getPath()+"/URCE/Saved");
+                                    if(!dir.exists())
+                                        dir.mkdir();
+                                    File imageFile = new File(dir,"URCE"+pos+".png");
+                                    try {
+                                        if (!imageFile.exists())
+                                            imageFile.createNewFile();
+                                        OutputStream fout = new FileOutputStream(imageFile);
+                                        resource.compress(Bitmap.CompressFormat.PNG, 100, fout);
+                                        fout.flush();
+                                        fout.close();
+                                        Toast.makeText(getApplicationContext(),"Image Downloaded",Toast.LENGTH_SHORT);
+                                        //MediaStore.Images.Media.insertImage(getContentResolver(),resource,"Image"+pos,"Saved from URCE");
+                                    }
+                                    catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                @Override
+                                public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                                }
+                            });
+                }
+            });
+
+            ivimage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    System.out.println(getAdapterPosition());
+                    String webUrl = url.get(getAdapterPosition());
+                    System.out.println(url);
+                    Intent intent = new Intent(getBaseContext(),MaxPost.class);
+                    intent.putExtra("URL",webUrl);
+                    startActivity(intent);
                 }
             });
 
@@ -332,16 +447,84 @@ public class Home extends AppCompatActivity{
             like.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    like.setImageResource(0);
                     like.setImageResource(R.drawable.ic_flame_linked);
+                    heart.setImageResource(R.drawable.ic_favorite_border_comment);
+                    pos = getAdapterPosition();
+                    Cursor resultSet = database.rawQuery("select post from CommentedPost where id='"+ contId.get(pos)+"'",null);
+                    if(resultSet.moveToFirst()){
+                        database.execSQL("update CommentedPost set post = 'liked' where id ='"+contId.get(pos)+"'");
+                        System.out.println("like");
+                    }
+                    else{
+                        database.execSQL("insert into CommentedPost values('"+contId.get(pos)+"','liked')");
+                        System.out.println("first like");
+                        int cot = Integer.parseInt(likes.get(pos))+1;
+                        reff.child("Container").child(contId.get(pos)).child("Liked").setValue(cot+"");
+                        com_count.setText(cot+" likes");
+                    }
                 }
             });
 
             heart.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("ddd");
                     heart.setImageResource(R.drawable.ic_favorite_linked);
+                    like.setImageResource(R.drawable.ic_flame_default);
+                    pos = getAdapterPosition();
+                    String s = "select post from CommentedPost where id='"+ contId.get(pos)+"'";
+                    System.out.println(s);
+                    Cursor resultSet = database.rawQuery(s,null);
+                    if(resultSet.moveToFirst()){
+                        database.execSQL("update CommentedPost set post = 'loved' where id ='"+contId.get(pos)+"'");
+                        System.out.println("love");
+                    }
+                    else{
+                        database.execSQL("insert into CommentedPost values('"+contId.get(pos)+"','loved')");
+                        System.out.println("first love");
+                        int cot = Integer.parseInt(likes.get(pos))+1;
+                        reff.child("Container").child(contId.get(pos)).child("Liked").setValue(cot+"");
+                        com_count.setText(cot+" likes");
+                    }
+                }
+            });
+
+            send.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String webUrl = url.get(getAdapterPosition());
+                    Glide.with(getBaseContext())
+                            .asBitmap()
+                            .load(webUrl)
+                            .into(new CustomTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                    File dir = new File(Environment.getExternalStorageDirectory().getPath()+"/URCE/Share");
+                                    if(!dir.exists())
+                                        dir.mkdir();
+                                    File imageFile = new File(dir,"sharing.png");
+                                    try{
+                                        if(!imageFile.exists())
+                                            imageFile.mkdir();
+                                        OutputStream fout = new FileOutputStream(imageFile);
+                                        resource.compress(Bitmap.CompressFormat.PNG,100,fout);
+                                        fout.flush();
+                                        fout.close();
+                                        Intent share = new Intent(Intent.ACTION_SEND);
+                                        share.setType("image/*");
+                                        share.putExtra(Intent.EXTRA_STREAM,Uri.parse(imageFile.getAbsolutePath()));
+                                        startActivity(Intent.createChooser(share,"Share via"));
+                                    }catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+
+
+                                }
+
+                                @Override
+                                public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                                }
+                            });
                 }
             });
         }

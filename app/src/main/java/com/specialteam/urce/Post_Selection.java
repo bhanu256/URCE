@@ -3,9 +3,13 @@ package com.specialteam.urce;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,6 +26,7 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -58,12 +63,61 @@ public class Post_Selection extends AppCompatActivity {
     String id;
     int ID;
 
+    boolean storagePermissionGranted = false;
+
+    final private int Storage_Permission_Requst_Code = 109;
+
+    EditText tag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post__selection);
 
-        from_explorer();
+        tag = findViewById(R.id.commentTag);
+
+        if(storagePermissionGranted)
+            from_explorer();
+        else
+            storagePermission();
+    }
+
+    public void storagePermission(){
+        if(ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED &&
+
+            ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED){
+            storagePermissionGranted = true;
+            from_explorer();
+        }
+        else{
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    Storage_Permission_Requst_Code);
+            storagePermissionGranted = false;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults){
+        storagePermissionGranted = false;
+        switch (requestCode) {
+            case Storage_Permission_Requst_Code: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                    storagePermissionGranted = true;
+                    from_explorer();
+                }
+                else{
+                    finish();
+                }
+            }
+        }
     }
 
     void from_explorer(){
@@ -157,14 +211,21 @@ public class Post_Selection extends AppCompatActivity {
                                 String comID = "com"+ID;
                                 String CName = "unkown";
                                 String url = uri.toString();
+                                String tagged = tag.getText().toString();
 
                                 reff.child("Container").child(id).child("CName").setValue(CName);
-                                reff.child("Container").child(id).child("CommentID").setValue(comID);
                                 reff.child("Container").child(id).child("PhotoID").setValue(url);
+                                reff.child("Container").child(id).child("Liked").setValue("0");
+                                reff.child("Container").child(id).child("ID").setValue(id);
+                                if(!tagged.equals("")||tagged!=null)
+                                    reff.child("Container").child(id).child("Desc").setValue(tagged);
+                                else
+                                    reff.child("Container").child(id).child("Desc").setValue("null");
 
+                                //To enable comments uncomment this.
+                                /*reff.child("Container").child(id).child("CommentID").setValue(comID);
                                 reff.child("IDs").child("Comments").child(comID).setValue(0);
-
-                                reff.child("Comments").child(comID).setValue(0);
+                                reff.child("Comments").child(comID).setValue(0);*/
 
                                 startActivity(intent);
                             }
@@ -312,9 +373,12 @@ public class Post_Selection extends AppCompatActivity {
     }
 
     public String getFilename() {
-        File file = new File(Environment.getExternalStorageDirectory().getPath(), "MyFolder/Images");
+        File file = new File(Environment.getExternalStorageDirectory().getPath(), "/URCE/Uploads");
+        System.out.println(file.getAbsolutePath());
         if (!file.exists()) {
+            System.out.println(file.getAbsolutePath());
             file.mkdirs();
+            System.out.println("dd");
         }
         String uriSting = (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
         return uriSting;
