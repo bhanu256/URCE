@@ -8,6 +8,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -45,6 +46,7 @@ public class Form extends AppCompatActivity {
 
     String[] departs = {"CSE","ECE","EEE","MECH","CIVIL","IT"};
     String[] years = {"1","2","3","4"};
+    String[] months = {"January","February","March","April","May","June","July","August","September","October","November","December"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,12 +97,8 @@ public class Form extends AppCompatActivity {
 
     public void submit(View view){
         String sname = name.getText().toString();
-        String snum = num.getText().toString();
+        String snum = num.getText().toString().toUpperCase();
         String sdob = dob.getText().toString();
-
-        System.out.println(sname+snum+sdep+syear+sdob);
-
-        isPerfectNum(snum);
 
         if(!sname.equals("")&&!snum.equals("")&&isPerfectNum(snum.toUpperCase())&&!sdep.equals("")&&!syear.equals("")&&!sdob.equals("")) {
 
@@ -114,16 +112,22 @@ public class Form extends AppCompatActivity {
 
             editor.commit();
 
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("StudentData").child(syear).child(snum);
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
-            databaseReference.child("Branch").setValue(sdep);
-            databaseReference.child("DOB").setValue(sdob);
-            databaseReference.child("Name").setValue(sname);
+            databaseReference.child("StudentData").child(syear).child(snum).child("Branch").setValue(sdep);
+            databaseReference.child("StudentData").child(syear).child(snum).child("DOB").setValue(sdob);
+            databaseReference.child("StudentData").child(syear).child(snum).child("Name").setValue(sname);
+
+            String[] sim = sdob.split("/");
+
+            databaseReference.child("BirthDates").child(months[Integer.parseInt(sim[1])-1]).child(sim[0]).child(syear);
 
             databaseReference.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
                     Intent intent = new Intent(Form.this,Home.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
                 }
 
@@ -166,6 +170,7 @@ public class Form extends AppCompatActivity {
         DatePickerDialog datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                month =  month+1;
                 dob.setText(dayOfMonth+"/"+month+"/"+year);
             }
         },cyear,cmonth,cdate);
@@ -183,5 +188,14 @@ public class Form extends AppCompatActivity {
         }
         else
             return false;
+    }
+
+    @Override
+    public void onBackPressed(){
+        finish();
+        Intent intent = new Intent(Form.this,Login.class);
+        sharedPreferences.edit().remove("App_Login_Mail").commit();
+        sharedPreferences.edit().remove("App_Login_Pass").commit();
+        startActivity(intent);
     }
 }

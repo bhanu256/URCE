@@ -25,6 +25,8 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Gravity;
@@ -42,7 +44,10 @@ import android.widget.Toast;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -66,12 +71,12 @@ import java.util.List;
 
 public class Home extends AppCompatActivity{
 
-    Intent intent;
+    Intent intent = null;
     Bundle bd;
 
-    List<String> url = new ArrayList<String>();
-    List<String> likes = new ArrayList<String>();
-    List<String> contId = new ArrayList<>();
+     List<String> url = new ArrayList<String>();
+     List<String> likes = new ArrayList<String>();
+     List<String> contId = new ArrayList<>();
 
     private DatabaseReference databaseReference;
     FirebaseAuth auth;
@@ -80,9 +85,15 @@ public class Home extends AppCompatActivity{
     String AppPreference = "URCE_Preference";
 
     FirebaseRecyclerAdapter<DataFromAdaptor,ContextHolder> adaptor;
+    LinearLayoutManager linearLayoutManager;
+    RecyclerView recyclerView;
+    Bundle recycleViewBundle;
+    final private String saveStateKey = "resumeKey";
 
     NavigationView naview;
     DrawerLayout drawerLayout;
+
+    String intent_mail = null;
 
     //From surya
     String date;
@@ -95,6 +106,13 @@ public class Home extends AppCompatActivity{
             "August","September","October","November","December"};
 
     SQLiteDatabase database;
+
+    String u;
+    String loc_likes;
+    String loc_id;
+
+    Button post_button;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,21 +130,37 @@ public class Home extends AppCompatActivity{
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
 
+        SharedPreferences prefs  = PreferenceManager.getDefaultSharedPreferences(this);
+        String spmail = prefs.getString("App_Login_Mail",null);
+        String sppass = prefs.getString("App_Login_Pass",null);
+
+        if(user.getUid()==null){
+            Intent logout = new Intent(Home.this,Login.class);
+            startActivity(logout);
+        }
+
         database = openOrCreateDatabase("URCE",MODE_PRIVATE,null);
+
+        post_button = findViewById(R.id.post_button_id);
 
         if(intent!=null) {
             bd = intent.getExtras();
-            //tv.setText(bd.getString("name"));
+
+            intent_mail = intent.getStringExtra("mail");
+
+            if(intent_mail!=null){
+            if(intent_mail.equals("canteen@usharama.in") || intent_mail.equals("bus@usharama.in")){
+                post_button.setVisibility(View.GONE);
+            }}
         }
-
-        String name = "bhnau";
-
-        Datas dats = new Datas(name);
-
-        databaseReference.child(user.getUid()).setValue(dats);
 
         drawerLayout = findViewById(R.id.my_drawer_layout);
         naview = findViewById(R.id.navigation);
+
+        TextView txtProfileName = naview.getHeaderView(0).findViewById(R.id.nav_header_textView);
+        String name = sharedPreferences.getString("Name",null);
+        if(name!=null)
+            txtProfileName.setText("Welcome "+name);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.open,R.string.close);
         drawerLayout.addDrawerListener(toggle);
@@ -156,13 +190,16 @@ public class Home extends AppCompatActivity{
                         sharedPreferences.edit().remove("Dep").commit();
                         sharedPreferences.edit().remove("Year").commit();
                         sharedPreferences.edit().remove("DOB").commit();
+                        FirebaseAuth.getInstance().signOut();
                         intent2 = new Intent(Home.this,Login.class);
+                        intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
                         startActivity(intent2);
+                        finish();
                     break;
 
                     case R.id.canteen :
                         String mail = sharedPreferences.getString("App_Login_Mail",null);
-                        if(mail.equals("canteen@gmail.com")){
+                        if(mail.equals("canteen@usharama.in")){
                             intent2 = new Intent(Home.this,CanteenAdmin.class);
                             startActivity(intent2);
                         }
@@ -174,6 +211,16 @@ public class Home extends AppCompatActivity{
 
                     case R.id.feedback :
                         intent2 = new Intent(Home.this,Feedback.class);
+                        startActivity(intent2);
+                        break;
+
+                    case R.id.clubs :
+                        intent2 = new Intent(Home.this,ClubsMenu.class);
+                        startActivity(intent2);
+                        break;
+
+                    case R.id.departments :
+                        intent2 = new Intent(Home.this,DepartmentsMenu.class);
                         startActivity(intent2);
                         break;
                 }
@@ -243,16 +290,29 @@ public class Home extends AppCompatActivity{
             }
 
             @Override
+            public DataFromAdaptor getItem(int p){
+                return super.getItem(getItemCount() - (p+1));
+            }
+
+            @Override
             protected void onBindViewHolder(@NonNull ContextHolder contextHolder, int i, @NonNull DataFromAdaptor dataFromAdaptor) {
+                u = dataFromAdaptor.getPhotoID();
+                loc_likes = dataFromAdaptor.getLiked();
+                loc_id = dataFromAdaptor.getID();
+
                 contextHolder.tvname.setText(dataFromAdaptor.getCName());
-                String u = dataFromAdaptor.getPhotoID();
-                Glide.with(getApplicationContext()).load(u).placeholder(R.mipmap.ic_launcher).into(contextHolder.ivimage);
-                url.add(u);
+                Glide.with(getApplicationContext())
+                        .load(u)
+                        .placeholder(R.mipmap.ic_launcher)
+                        .into(contextHolder.ivimage);
                 contextHolder.commented.setText(dataFromAdaptor.getDesc());
-                String loc_likes = dataFromAdaptor.getLiked();
-                String loc_id = dataFromAdaptor.getID();
+
+                if(!url.contains(u))
+                    url.add(u);
+                if(!contId.contains(loc_id))
+                    contId.add(loc_id);
                 likes.add(loc_likes);
-                contId.add(loc_id);
+
                 String s = "select post from CommentedPost where id='"+ loc_id+"'";
 
                 Cursor resultSet = database.rawQuery(s,null);
@@ -278,11 +338,11 @@ public class Home extends AppCompatActivity{
             }
         };
 
-        RecyclerView recyclerView = findViewById(R.id.recycle);
+        recyclerView = findViewById(R.id.recycle);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        linearLayoutManager = new LinearLayoutManager(Home.this);
+        recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adaptor);
-        System.out.println("qaf");
     }
 
     private void createBirthdayWish(int i, String rollNumberString) {
@@ -331,6 +391,38 @@ public class Home extends AppCompatActivity{
         adaptor.stopListening();
     }
 
+    @Override
+    protected void onPause(){
+        super.onPause();
+
+        recycleViewBundle = new Bundle();
+        Parcelable state = linearLayoutManager.onSaveInstanceState();
+        recycleViewBundle.putParcelable(saveStateKey,state);
+        System.out.println("saved");
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        drawerLayout.closeDrawer(Gravity.LEFT);
+
+        if(recycleViewBundle!=null){
+            Parcelable state = recycleViewBundle.getParcelable(saveStateKey);
+            linearLayoutManager.onRestoreInstanceState(state);
+            System.out.println("resume");
+        }
+    }
+
+    @Override
+    public void onBackPressed(){
+        onDestroy();
+        finish();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
+    }
+
     public void post_select(View view){
         Intent intent = new Intent(Home.this,Post_Selection.class);
         startActivity(intent);
@@ -366,8 +458,6 @@ public class Home extends AppCompatActivity{
             tvname = itemView.findViewById(R.id.cname);
             ivimage = itemView.findViewById(R.id.img);
             //vac = itemView.findViewById(R.id.vac);
-
-            System.out.println("fwef");
 
             like = itemView.findViewById(R.id.frame_id);
             heart = itemView.findViewById(R.id.heart);
@@ -434,9 +524,12 @@ public class Home extends AppCompatActivity{
             ivimage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println(getAdapterPosition());
-                    String webUrl = url.get(getAdapterPosition());
-                    System.out.println(url);
+                    pos = getAdapterPosition();
+                    String webUrl = url.get(pos);
+                    System.out.println(pos);
+                    System.out.println("dddd");
+                    System.out.println(contId);
+                    System.out.println(webUrl);
                     Intent intent = new Intent(getBaseContext(),MaxPost.class);
                     intent.putExtra("URL",webUrl);
                     startActivity(intent);
@@ -481,6 +574,7 @@ public class Home extends AppCompatActivity{
                     else{
                         database.execSQL("insert into CommentedPost values('"+contId.get(pos)+"','loved')");
                         System.out.println("first love");
+                        System.out.println(likes);
                         int cot = Integer.parseInt(likes.get(pos))+1;
                         reff.child("Container").child(contId.get(pos)).child("Liked").setValue(cot+"");
                         com_count.setText(cot+" likes");
@@ -504,7 +598,7 @@ public class Home extends AppCompatActivity{
                                     File imageFile = new File(dir,"sharing.png");
                                     try{
                                         if(!imageFile.exists())
-                                            imageFile.mkdir();
+                                            imageFile.createNewFile();
                                         OutputStream fout = new FileOutputStream(imageFile);
                                         resource.compress(Bitmap.CompressFormat.PNG,100,fout);
                                         fout.flush();

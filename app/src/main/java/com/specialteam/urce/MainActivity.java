@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity{
 
         auth = FirebaseAuth.getInstance();
 
-        if(mail!=null&&name!=null){
+        if(mail!=null){
             Log.d("Mail",mail);
             Log.d("Pass",pass);
             auth.signInWithEmailAndPassword(mail,pass)
@@ -52,6 +52,8 @@ public class MainActivity extends AppCompatActivity{
 
                                 if(Fuser!=null){
                                     intent = new Intent(MainActivity.this,Home.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.putExtra("mail",mail);
                                     startActivity(intent);
                                 }
                             }

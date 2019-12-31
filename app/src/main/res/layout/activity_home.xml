@@ -18,39 +18,42 @@
 
 
         <LinearLayout
+            android:id="@+id/BirthdayCardLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@color/white"
+            android:elevation="3dp"
             android:orientation="vertical"
-            android:background="@color/colorSmoothGreen"
-            android:id="@+id/BirthdayCardLayout"
-            android:visibility="gone"
-            android:elevation="3dp">
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Happy Birthday!!"
+                android:fontFamily="@font/pacifico"
                 android:gravity="center"
-                android:fontFamily="@font/harmattan"
-                android:textSize="20sp"
-                />
+                android:text="Usha Rama wishes a very a Happy Birthday to: "
+                android:textColor="@color/colorBlue"
+                android:textSize="20sp" />
 
             <TextView
+                android:id="@+id/BirthdayNamesTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/bad_script"
+                android:gravity="center"
                 android:text=""
-                android:gravity="center"
-                android:fontFamily="@font/harmattan"
-                android:textStyle="bold"
-                android:id="@+id/BirthdayNamesTextView"/>
+                android:textColor="#000000"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="100px"
-            android:text="wfwfwfw"
-            android:onClick="post_select"/>
+            android:text="Post something"
+            android:onClick="post_select"
+            android:id="@+id/post_button_id"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycle"
@@ -67,6 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/menu" />
+        app:menu="@menu/menu"
+        app:headerLayout="@layout/nav_header_main"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

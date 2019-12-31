@@ -23,10 +23,11 @@ public class AfterKilled extends Service {
 
     @Override
     public void onTaskRemoved(Intent intent){
-        Intent locationIntent = new Intent(this,GetLocationSet.class);
+        Intent locationIntent = new Intent(AfterKilled.this,GetLocationSet.class);
         System.out.println("Yes");
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
+            System.out.println("jjk");
             startForegroundService(locationIntent);
         }
         else{

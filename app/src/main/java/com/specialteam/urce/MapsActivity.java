@@ -1,6 +1,7 @@
 package com.specialteam.urce;
 
 
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -54,10 +55,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     public Marker marker=null;
 
+    String bus=null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        Intent intent_bus = getIntent();
+
+        bus = intent_bus.getStringExtra("Bus");
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -158,8 +165,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 databaseReference.child("Location").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            Double lat = Double.parseDouble(dataSnapshot.child("Latitude").getValue().toString());
-                            Double lon = Double.parseDouble(dataSnapshot.child("Longitude").getValue().toString());
+                            Double lat = Double.parseDouble(dataSnapshot.child(bus).child("Latitude").getValue().toString());
+                            Double lon = Double.parseDouble(dataSnapshot.child(bus).child("Longitude").getValue().toString());
                             LatLng location = new LatLng(lat,lon);
                             if(marker!=null){
                                 marker.remove();
@@ -180,5 +187,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
 
 
+    }
+
+    @Override
+    public void onBackPressed(){
+        finish();
+        Intent intent = new Intent(MapsActivity.this,Home.class);
+        startActivity(intent);
     }
 }

@@ -20,7 +20,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MaxPost"></activity>
+        <activity android:name=".DeptPage"></activity>
+        <activity android:name=".DepartmentsMenu" />
+        <activity android:name=".ClubsPage" />
+        <activity android:name=".ClubsMenu" />
+        <activity android:name=".Form_teachers" />
+        <activity android:name=".MaxPost" />
         <activity android:name=".Feedback" />
         <activity android:name=".CanteenStudent" />
         <activity android:name=".CanteenAdmin" />
@@ -37,7 +42,17 @@
             android:stopWithTask="false" />
 
         <activity android:name=".Form" />
-        <activity android:name=".Post_Selection" />
+        <activity
+            android:name=".Post_Selection"
+            android:parentActivityName=".Home">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity>
         <activity android:name=".Comment" />
         <activity
             android:name=".MapsActivity"
@@ -71,7 +86,8 @@
         <service
             android:name=".GetLocationSet"
             android:enabled="true"
-            android:exported="false" />
+            android:exported="true"
+            android:stopWithTask="false" />
 
         <uses-library
             android:name="org.apache.http.legacy"

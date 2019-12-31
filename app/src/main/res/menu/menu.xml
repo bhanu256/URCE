@@ -19,6 +19,14 @@
             android:title="Feedback"
             android:id="@+id/feedback"/>
 
+        <item
+            android:title="Clubs"
+            android:id="@+id/clubs"/>
+
+        <item
+            android:title="Departments"
+            android:id="@+id/departments"/>
+
         <item android:id="@+id/logout"
             android:title="Logout"/>
 

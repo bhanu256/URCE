@@ -17,6 +17,28 @@
         <include
             layout="@layout/toolbar"/>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bus no :"/>
+
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/bus_select_id"/>
+        </LinearLayout>
+
+        <Spinner
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/bus_spinner"/>
+
         <Button
             android:layout_height="100dp"
             android:layout_width="100dp"
@@ -24,12 +46,24 @@
             android:id="@+id/stu"
             android:onClick="stud"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/bus_status_id"/>
+
         <Button
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:text="Update"
             android:id="@+id/bus"
             android:onClick="bus"/>
+
+        <Button
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:text="Stop"
+            android:id="@+id/bus_stop"
+            android:onClick="stopped"/>
 
     </LinearLayout>
 

@@ -19,8 +19,15 @@ public class MaxPost extends AppCompatActivity {
         String url = getdata.getStringExtra("URL");
         getdata.removeExtra("URL");
 
+        System.out.println(url);
+
         ImageView img = findViewById(R.id.max_post_img);
 
         Glide.with(getApplicationContext()).load(url).placeholder(R.mipmap.ic_launcher).into(img);
+    }
+
+    @Override
+    public void onBackPressed(){
+        finish();
     }
 }

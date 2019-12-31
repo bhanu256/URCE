@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CanteenAdmin"
+    android:fitsSystemWindows="true"
+    android:id="@+id/my_drawer_layout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/toolbar"/>
+
+        <ScrollView
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:fillViewport="true"
+            android:background="@color/colorClub">
+
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:context=".ClubsMenu">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="140dp"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="40dp"
+                    android:layout_marginBottom="30dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Film Club"
+                            android:id="@+id/FilmClub"
+                            android:gravity="center"
+                            android:fontFamily="@font/harmattan"
+                            android:textSize="30sp"
+                            android:background="@drawable/canteen_rounded"
+                            android:elevation="5dp"
+                            android:onClick="FilmClub"/>
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Literary Club"
+                            android:gravity="center"
+                            android:fontFamily="@font/harmattan"
+                            android:textSize="30sp"
+                            android:background="@drawable/canteen_rounded"
+                            android:elevation="5dp"
+                            android:layout_marginTop="10dp"
+                            android:onClick="LiteraryClub"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Entrepreneur Club"
+                            android:gravity="center"
+                            android:fontFamily="@font/harmattan"
+                            android:textSize="30sp"
+                            android:background="@drawable/canteen_rounded"
+                            android:elevation="5dp"
+                            android:layout_marginTop="10dp"
+                            android:onClick="EntreClub"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Sports Club"
+                            android:gravity="center"
+                            android:fontFamily="@font/harmattan"
+                            android:textSize="30sp"
+                            android:background="@drawable/canteen_rounded"
+                            android:elevation="5dp"
+                            android:layout_marginTop="10dp"
+                            android:onClick="SportsClub"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Photography Club"
+                            android:gravity="center"
+                            android:fontFamily="@font/harmattan"
+                            android:textSize="30sp"
+                            android:background="@drawable/canteen_rounded"
+                            android:elevation="5dp"
+                            android:layout_marginTop="10dp"
+                            android:onClick="PhotographyClub"/>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Cultural Club"
+                            android:gravity="center"
+                            android:fontFamily="@font/harmattan"
+                            android:textSize="30sp"
+                            android:background="@drawable/canteen_rounded"
+                            android:elevation="5dp"
+                            android:layout_marginTop="10dp"
+                            android:onClick="CulturalClub"/>
+                    </LinearLayout>
+
+                </RelativeLayout>
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="15dp"
+                    android:fontFamily="@font/harmattan"
+                    android:gravity="center"
+                    android:text="An Application from \nUsha Rama Innovation and Incubation Center"
+                    android:textColor="#9E9E9E"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/menu" />
+
+
+
+</androidx.drawerlayout.widget.DrawerLayout>

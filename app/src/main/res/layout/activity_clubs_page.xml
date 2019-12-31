@@ -23,137 +23,98 @@
             android:layout_width="match_parent"
             xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:fillViewport="true">
+            android:fillViewport="true"
+            android:background="@color/white">
+
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:context=".CanteenStudent"
-                android:background="#424242">
+                tools:context=".ClubsPage"
+                android:background="@color/white">
 
                 <RelativeLayout
-                    android:id="@+id/relativeLayout"
+                    android:id="@+id/relativeLayout2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:layout_editor_absoluteX="30dp"
-                    tools:layout_editor_absoluteY="30dp"
+                    android:background="#00838F"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
                     <TextView
+                        android:id="@+id/ClubName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
                         android:fontFamily="@font/harmattan"
                         android:gravity="center"
-                        android:text="Today's Menu"
+                        android:paddingBottom="10dp"
+                        android:text="Club Name"
+                        android:textColor="@color/white"
                         android:textSize="30sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="40dp"
-                        android:textColor="@color/white"/>
+                        android:textStyle="bold" />
+
+
 
                 </RelativeLayout>
 
                 <LinearLayout
-                    android:id="@+id/linearLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@+id/relativeLayout2"
                     android:layout_margin="20dp"
-                    android:orientation="vertical"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.4"
-                    tools:layout_editor_absoluteX="30dp">
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:text="Mission: "
                         android:fontFamily="@font/harmattan"
-                        android:text="MORNING"
-                        android:textColor="#FFA000"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
+                        android:textStyle="bold"
+                        android:textSize="20sp"/>
                     <TextView
-                        android:id="@+id/morningItemsStudent"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:elevation="3dp"
+                        android:text="Mission Description"
+                        android:textColor="#000000"
                         android:fontFamily="@font/harmattan"
-                        android:text="Morning items"
-                        android:textColor="@color/white"
-                        android:textSize="15sp" />
+                        android:id="@+id/MissionDescView"
+                        android:textSize="15sp"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:text="Head: "
                         android:fontFamily="@font/harmattan"
-                        android:text="AFTERNOON"
-                        android:textColor="#FFA000"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
+                        android:textStyle="bold"
+                        android:textSize="20sp"/>
                     <TextView
-                        android:id="@+id/afternoonItemsStudent"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:elevation="3dp"
+                        android:text=" "
+                        android:textColor="#000000"
                         android:fontFamily="@font/harmattan"
-                        android:text="Afternoon Items"
-                        android:textColor="@color/white"
-                        android:textSize="15sp" />
+                        android:id="@+id/HeadDescView"
+                        android:textSize="15sp"/>
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:text="More about the club: "
                         android:fontFamily="@font/harmattan"
-                        android:text="EVENING"
-                        android:textColor="#FFA000"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
-
+                        android:textStyle="bold"
+                        android:textSize="20sp"/>
                     <TextView
-                        android:id="@+id/eveningItemsStudent"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:elevation="3dp"
+                        android:text="Description"
+                        android:textColor="#000000"
                         android:fontFamily="@font/harmattan"
-                        android:text="Evening Items"
-                        android:textColor="@color/white"
-                        android:textSize="15sp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Rate today's food?"
-                        android:gravity="center"
-                        android:textColor="@color/white"
-                        android:layout_marginTop="30dp"
-                        android:fontFamily="@font/harmattan"/>
-
-
-                    <RatingBar
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/ImageRatingBar"
-                        android:id="@+id/ratingBar"
-                        android:stepSize="1"
-                        android:numStars="5"
-                        android:layout_marginTop="30dp"
-                        android:layout_gravity="center" />
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Submit"
-                        android:layout_marginTop="20dp"
-                        android:onClick="submitCanteenRating"
-                        android:layout_gravity="center"
-                        android:background="#FFCA28"
-                        android:elevation="3dp"
-                        android:id="@+id/RateButton"/>
+                        android:id="@+id/DescDescView"
+                        android:textSize="15sp"/>
 
                 </LinearLayout>
-
 
                 <TextView
                     android:id="@+id/textView2"
@@ -171,7 +132,6 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="1.0" />
-
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CanteenAdmin"
+    android:fitsSystemWindows="true"
+    android:id="@+id/my_drawer_layout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/toolbar"/>
+
+        <ScrollView
+            android:layout_height="match_parent"
+            android:layout_width="match_parent"
+            android:background="@color/colorClub">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="60dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Civil Engineering"
+                    android:gravity="center"
+                    android:fontFamily="@font/harmattan"
+                    android:textSize="30sp"
+                    android:background="@drawable/canteen_rounded"
+                    android:elevation="5dp"
+                    android:layout_marginTop="0dp"
+                    android:onClick="CIVIL"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Electrical and Electronics Engineering"
+                    android:gravity="center"
+                    android:fontFamily="@font/harmattan"
+                    android:textSize="30sp"
+                    android:background="@drawable/canteen_rounded"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:onClick="EEE"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Mechanical Engineering"
+                    android:gravity="center"
+                    android:fontFamily="@font/harmattan"
+                    android:textSize="30sp"
+                    android:background="@drawable/canteen_rounded"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:onClick="ME"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="	Electronics and Communication Engineering"
+                    android:gravity="center"
+                    android:fontFamily="@font/harmattan"
+                    android:textSize="30sp"
+                    android:background="@drawable/canteen_rounded"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:onClick="ECE"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Computer Science Engineering"
+                    android:gravity="center"
+                    android:fontFamily="@font/harmattan"
+                    android:textSize="30sp"
+                    android:background="@drawable/canteen_rounded"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:onClick="CSE"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Information Technology"
+                    android:gravity="center"
+                    android:fontFamily="@font/harmattan"
+                    android:textSize="30sp"
+                    android:background="@drawable/canteen_rounded"
+                    android:elevation="5dp"
+                    android:layout_marginTop="10dp"
+                    android:onClick="IT"/>
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="30dp"
+                    android:fontFamily="@font/harmattan"
+                    android:gravity="center"
+                    android:text="An Application from \nUsha Rama Innovation and Incubation Center"
+                    android:textColor="#9E9E9E" />
+            </LinearLayout>
+
+        </ScrollView>
+    </LinearLayout>
+
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:menu="@menu/menu" />
+
+
+
+</androidx.drawerlayout.widget.DrawerLayout>

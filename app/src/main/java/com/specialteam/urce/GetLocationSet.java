@@ -8,11 +8,13 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.IBinder;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.widget.Toast;
@@ -43,6 +45,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -59,6 +66,8 @@ import static com.google.android.gms.location.LocationServices.getFusedLocationP
  * helper methods.
  */
 public class GetLocationSet extends Service {
+
+    static boolean start_stop = false;
 
     private DatabaseReference databaseReference;
     private FirebaseAuth auth;
@@ -80,9 +89,17 @@ public class GetLocationSet extends Service {
     NotificationChannel channel;
     NotificationManager notificationManager;
 
+    SharedPreferences sharedPreferences;
+    String AppPreference = "URCE_Preference";
+
+    String bus;
 
     public void intervallocations(){
         try {
+
+            bus = sharedPreferences.getString("Bus",null);
+
+            System.out.println(bus);
 
             Task<Location> locationResult = mFusedLocationProviderClient.getLastLocation();
             Log.v("TAG", locationResult.toString());
@@ -91,8 +108,8 @@ public class GetLocationSet extends Service {
                 public void onSuccess(Location location) {
                     if(location!=null){
                         Log.v("loca",location.getLatitude()+" "+location.getLongitude());
-                        databaseReference.child("Location").child("Latitude").setValue(location.getLatitude());
-                        databaseReference.child("Location").child("Longitude").setValue(location.getLongitude());
+                        databaseReference.child("Location").child(bus).child("Latitude").setValue(location.getLatitude());
+                        databaseReference.child("Location").child(bus).child("Longitude").setValue(location.getLongitude());
                     }
                 }
             });
@@ -160,6 +177,14 @@ public class GetLocationSet extends Service {
     public void onCreate(){
         super.onCreate();
 
+
+        System.out.println("created");
+
+        sharedPreferences = getSharedPreferences(AppPreference,MODE_PRIVATE);
+
+        bus = sharedPreferences.getString("Bus",null);
+        System.out.println(bus);
+
         Intent intent = new Intent(GetLocationSet.this,AfterKilled.class);
         startService(intent);
 
@@ -186,6 +211,8 @@ public class GetLocationSet extends Service {
         this.auth = FirebaseAuth.getInstance();
         this.user = auth.getCurrentUser();
 
+        startForeground(12345, notification);
+
         this.mFusedLocationProviderClient = getFusedLocationProviderClient(this);
         /*locationCallback = new LocationCallback(){
           @Override
@@ -207,28 +234,35 @@ public class GetLocationSet extends Service {
             @Override
             public void run() {
 
-                if(i%2==0) {
-                    System.out.println("jjk");
-                    intervallocations();
-                    startForeground(12345, notification);
-                    StatusBarNotification[] notlist = notificationManager.getActiveNotifications();
-                    for(int j=0;j<notlist.length;j++){
-                        System.out.println(notlist[j].getId());
-                    }
-                }
-                else {
-                    System.out.println("out");
-                    //stopService(new Intent(GetLocationSet.this, GetLocationSet.class));
+                if(start_stop){
                     stopForeground(true);
-                    StatusBarNotification[] notlist = notificationManager.getActiveNotifications();
-                    for(int j=0;j<notlist.length;j++){
-                        System.out.println(notlist[j].getId());
-                    }
-                    //onDestroy();
                 }
-                ++i;
+
+                SimpleDateFormat pat = new SimpleDateFormat("EEEE");
+                Date presentDay = new Date();
+                System.out.println(pat.format(presentDay));
+
+                SimpleDateFormat tm = new SimpleDateFormat("HH:mm");
+                String pt = tm.format(presentDay);
+                System.out.println(pt);
+
+                String st = "06:30";
+                String et = "09:00";
+
+
+                    if(pt.compareTo(st)>0 && pt.compareTo(et)<0 && pat.format(presentDay)!="Sunday"){
+                        System.out.println("jj");
+                        intervallocations();
+                    }
+                    else {
+                        stopForeground(true);
+                    }
+
+                    //stopService(new Intent(GetLocationSet.this, GetLocationSet.class));
+                    //stopForeground(true);
+                    //onDestroy();
             }
-        },0,30000);
+        },0,6000);
 
         /*try {
             mFusedLocationProviderClient.requestLocationUpdates(locationRequest, null);
@@ -242,11 +276,31 @@ public class GetLocationSet extends Service {
     @Override
     public void onDestroy(){
         super.onDestroy();
-
-        Intent broadcastIntent = new Intent();
+            System.out.println("dkskslk");
+        /*Intent broadcastIntent = new Intent();
         broadcastIntent.setAction("restartservice");
         broadcastIntent.setClass(this, MyReceiver.class);
-        this.sendBroadcast(broadcastIntent);
+        this.sendBroadcast(broadcastIntent);*/
+    }
+
+    @Override
+    public void onTaskRemoved(Intent intent){
+        Intent locationIntent = new Intent(this,GetLocationSet.class);
+        System.out.println("Yes");
+
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
+            startForegroundService(locationIntent);
+        }
+        else{
+            startService(locationIntent);
+        }
+        super.onTaskRemoved(intent);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
 
@@ -255,4 +309,9 @@ public class GetLocationSet extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+    public void stop(){
+
+    }
+
 }

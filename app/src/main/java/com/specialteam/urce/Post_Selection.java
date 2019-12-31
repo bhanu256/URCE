@@ -1,7 +1,7 @@
 package com.specialteam.urce;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,18 +21,15 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -50,7 +48,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.UUID;
+import java.io.OutputStream;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Post_Selection extends AppCompatActivity {
 
@@ -69,6 +69,12 @@ public class Post_Selection extends AppCompatActivity {
 
     EditText tag;
 
+    Intent intentForReceive;
+    String action;
+    String type;
+
+    String AppPreference = "URCE_Preference";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,10 +82,61 @@ public class Post_Selection extends AppCompatActivity {
 
         tag = findViewById(R.id.commentTag);
 
-        if(storagePermissionGranted)
-            from_explorer();
+        intentForReceive = getIntent();
+        action = intentForReceive.getAction();
+        type = intentForReceive.getType();
+
+        if(storagePermissionGranted) {
+            if (Intent.ACTION_SEND.equals(action) && type != null) {
+
+                if(type.startsWith("image/")){
+                        handleIntentSend(intentForReceive);
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"Unsupported format.",Toast.LENGTH_SHORT);
+                }
+
+            } else {
+                from_explorer();
+            }
+        }
         else
             storagePermission();
+    }
+
+    public void handleIntentSend(Intent data){
+        System.out.println("dddd");
+        Uri temp_imageUri = data.getParcelableExtra(Intent.EXTRA_STREAM);
+
+        Bitmap bitmap = null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),temp_imageUri);
+        File dir = new File(Environment.getExternalStorageDirectory().getPath()+"/URCE/");
+        if(!dir.exists())
+            dir.mkdir();
+        File imageFile = new File(dir,"temp.png");
+        if(!imageFile.exists())
+            imageFile.createNewFile();
+        else{
+            imageFile.delete();
+            imageFile.createNewFile();
+        }
+        OutputStream fout = new FileOutputStream(imageFile);
+        bitmap.compress(Bitmap.CompressFormat.PNG, 75, fout);
+        fout.flush();
+        fout.close();
+        imageUri = Uri.fromFile(imageFile);
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+
+        if(imageUri!=null){
+
+            String compressed_path = compressImage(imageUri.getPath());
+            System.out.println(compressed_path);
+            compr = compressed_path;
+            upload(compressed_path);
+        }
     }
 
     public void storagePermission(){
@@ -89,7 +146,18 @@ public class Post_Selection extends AppCompatActivity {
             ContextCompat.checkSelfPermission(this.getApplicationContext(),
                     Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED){
             storagePermissionGranted = true;
-            from_explorer();
+            if (Intent.ACTION_SEND.equals(action) && type != null) {
+
+                if(type.startsWith("image/")){
+                    handleIntentSend(intentForReceive);
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"Unsupported format.",Toast.LENGTH_SHORT);
+                }
+
+            } else {
+                from_explorer();
+            }
         }
         else{
             ActivityCompat.requestPermissions(this,
@@ -111,7 +179,18 @@ public class Post_Selection extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED
                         && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     storagePermissionGranted = true;
-                    from_explorer();
+                    if (Intent.ACTION_SEND.equals(action) && type != null) {
+
+                        if(type.startsWith("image/")){
+                            handleIntentSend(intentForReceive);
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(),"Unsupported format.",Toast.LENGTH_SHORT);
+                        }
+
+                    } else {
+                        from_explorer();
+                    }
                 }
                 else{
                     finish();
@@ -133,13 +212,17 @@ public class Post_Selection extends AppCompatActivity {
 
         if(requestCode==PICK_IMAGE && resultCode==RESULT_CODE && data!=null && data.getData()!=null){
             imageUri = data.getData();
+
             if(imageUri!=null){
 
-                String compressed_path = compressImage();
+                String compressed_path = compressImage(null);
                 System.out.println(compressed_path);
                 compr = compressed_path;
                 upload(compressed_path);
             }
+        }
+        else if(requestCode==PICK_IMAGE && data==null){
+            finish();
         }
     }
 
@@ -209,9 +292,11 @@ public class Post_Selection extends AppCompatActivity {
 
                                 DatabaseReference reff = FirebaseDatabase.getInstance().getReference();
                                 String comID = "com"+ID;
-                                String CName = "unkown";
+                                SharedPreferences prefs = getSharedPreferences(AppPreference,MODE_PRIVATE);
+                                String CName = prefs.getString("Name",null);
                                 String url = uri.toString();
                                 String tagged = tag.getText().toString();
+
 
                                 reff.child("Container").child(id).child("CName").setValue(CName);
                                 reff.child("Container").child(id).child("PhotoID").setValue(url);
@@ -226,7 +311,7 @@ public class Post_Selection extends AppCompatActivity {
                                 /*reff.child("Container").child(id).child("CommentID").setValue(comID);
                                 reff.child("IDs").child("Comments").child(comID).setValue(0);
                                 reff.child("Comments").child(comID).setValue(0);*/
-
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
                             }
                         });
@@ -252,9 +337,10 @@ public class Post_Selection extends AppCompatActivity {
                 });
     }
 
-    public String compressImage() {
+    public String compressImage(String filePath) {
 
-        String filePath = getPathAPI19(imageUri);
+        if(filePath==null)
+            filePath = getPathAPI19(imageUri);
         System.out.println(filePath);
         Bitmap scaledBitmap = null;
 
@@ -387,14 +473,17 @@ public class Post_Selection extends AppCompatActivity {
 
     private String getRealPathFromURI(Uri contentUri) {
         //Uri contentUri = Uri.parse(contentURI);
+        String rwes = null;
         Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
         if (cursor == null) {
             return contentUri.getPath();
         } else {
-            cursor.moveToFirst();
+            if(cursor.moveToFirst()){
             int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            return cursor.getString(index);
+            rwes = cursor.getString(index);
+            }
         }
+        return rwes;
     }
 
     public String getPathFromURI(Uri contentUri) {
@@ -448,5 +537,33 @@ public class Post_Selection extends AppCompatActivity {
         }
 
         return inSampleSize;
+    }
+
+    public void ale(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.progressing,null);
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        dialog.setCancelable(false);
+    }
+
+    public void im(View view){
+        System.out.println("Text");
+    }
+
+    public void te(View view){
+        System.out.println("img");
+    }
+
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(Post_Selection.this,Home.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 }
